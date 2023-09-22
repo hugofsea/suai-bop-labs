@@ -14,8 +14,7 @@ using parallel_policy = std::variant
                         <
                          std::execution::sequenced_policy,
                          std::execution::parallel_policy,
-                         std::execution::parallel_unsequenced_policy,
-                         std::execution::unsequenced_policy
+                         std::execution::parallel_unsequenced_policy
                         >;
 
 void benchmark(const parallel_policy &policy) {
@@ -37,20 +36,25 @@ void benchmark(const parallel_policy &policy) {
     );
 }
 
-void print_time(const parallel_policy &policy) {
+void print_time(const std::pair<std::string, parallel_policy> &policy) {
     auto start = std::chrono::high_resolution_clock::now();
 
-    benchmark(std::execution::par);
+    benchmark(policy.second);
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-
-    std::cout << "Duration: " << duration.count() << " microseconds" << std::endl;
+    
+    std::cout << policy.first << " - Duration: " << duration.count() << " microseconds" << std::endl;
 }
 
 
 int main() {
-    parallel_policy policies[] = { std::execution::seq, std::execution::par, std::execution::par_unseq };
+    std::pair<std::string, parallel_policy> 
+        seq = { "std::execution::sequenced_policy", std::execution::seq }, 
+        par = { "std::execution::parallel_policy", std::execution::par },
+        par_unseq = { "std::execution::parallel_unsequenced_policy", std::execution::par_unseq };
+
+    std::pair<std::string, parallel_policy> policies[] = { seq, par, par_unseq };
 
     std::for_each(std::begin(policies), std::end(policies), print_time);
 
