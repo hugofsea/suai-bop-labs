@@ -28,8 +28,6 @@ void benchmark(const parallel_policy &policy) {
         [&](auto policy_real)
         {
             std::generate(policy_real, std::begin(array), std::end(array), rand_num);
-            std::sort(policy_real, std::begin(array), std::end(array));
-            std::reverse(policy_real, std::begin(array), std::end(array));
             std::replace(policy_real, std::begin(array), std::end(array), E1, E2);
         },
         policy
